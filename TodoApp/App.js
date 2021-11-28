@@ -9,7 +9,7 @@
 import React from 'react';
 import {StyleSheet, KeyboardAvoidingView, Platform} from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import todosStorage from './storages/todosStorage';
 import DateHead from './components/DateHead';
 import AddTodo from './components/AddTodo';
 import Empty from './components/Empty';
@@ -53,30 +53,12 @@ export default function App() {
 
   // load todos
   React.useEffect(() => {
-    async function load() {
-      try {
-        const rawTodos = await AsyncStorage.getItem('todos');
-        const savedTodos = JSON.parse(rawTodos);
-        console.log('load', savedTodos);
-        setTodos(savedTodos);
-      } catch (e) {
-        console.log('Failed to load todos');
-      }
-    }
-    load();
+    todosStorage.get().then(setTodos).catch(console.error);
   }, []);
 
   // save todos
   React.useEffect(() => {
-    async function save() {
-      try {
-        console.log('save', todos);
-        await AsyncStorage.setItem('todos', JSON.stringify(todos));
-      } catch (e) {
-        console.log('Failed to save todos');
-      }
-    }
-    save();
+    todosStorage.set(todos).catch(console.error);
   }, [todos]);
 
   return (
