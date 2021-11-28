@@ -46,6 +46,10 @@ export default function App() {
     );
   };
 
+  const handleRemove = id => {
+    setTodos(todos.filter(todo => id !== todo.id));
+  };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView edges={['bottom']} style={styles.block}>
@@ -54,7 +58,11 @@ export default function App() {
           style={styles.avoid}>
           <DateHead today={today} />
           {todos.length > 0 ? (
-            <TodoList todos={todos} onToggle={handleToggle} />
+            <TodoList
+              todos={todos}
+              onToggle={handleToggle}
+              onRemove={handleRemove}
+            />
           ) : (
             <Empty />
           )}

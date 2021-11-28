@@ -2,7 +2,7 @@ import React from 'react';
 import {FlatList, View, StyleSheet} from 'react-native';
 import TodoItem from './TodoItem';
 
-export default function TodoList({todos, onToggle}) {
+export default function TodoList({todos, onToggle, onRemove}) {
   return (
     <FlatList
       style={styles.list}
@@ -14,6 +14,7 @@ export default function TodoList({todos, onToggle}) {
           text={item.text}
           done={item.done}
           onToggle={onToggle}
+          onRemove={onRemove}
         />
       )}
     />
