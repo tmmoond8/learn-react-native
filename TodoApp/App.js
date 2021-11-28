@@ -9,6 +9,7 @@
 import React from 'react';
 import {StyleSheet, KeyboardAvoidingView, Platform} from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateHead from './components/DateHead';
 import AddTodo from './components/AddTodo';
 import Empty from './components/Empty';
@@ -49,6 +50,34 @@ export default function App() {
   const handleRemove = id => {
     setTodos(todos.filter(todo => id !== todo.id));
   };
+
+  // load todos
+  React.useEffect(() => {
+    async function load() {
+      try {
+        const rawTodos = await AsyncStorage.getItem('todos');
+        const savedTodos = JSON.parse(rawTodos);
+        console.log('load', savedTodos);
+        setTodos(savedTodos);
+      } catch (e) {
+        console.log('Failed to load todos');
+      }
+    }
+    load();
+  }, []);
+
+  // save todos
+  React.useEffect(() => {
+    async function save() {
+      try {
+        console.log('save', todos);
+        await AsyncStorage.setItem('todos', JSON.stringify(todos));
+      } catch (e) {
+        console.log('Failed to save todos');
+      }
+    }
+    save();
+  }, [todos]);
 
   return (
     <SafeAreaProvider>
