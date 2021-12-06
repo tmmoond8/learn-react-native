@@ -12,7 +12,8 @@ export default function MainScreen() {
       initialRouteName="Home"
       tabBarOptions={{
         showIcon: true,
-      }}>
+      }}
+      shifting={false}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
