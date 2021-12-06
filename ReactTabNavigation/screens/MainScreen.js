@@ -1,6 +1,7 @@
 import React from 'react';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import {View, Text, Button, StyleSheet} from 'react-native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Tab = createMaterialBottomTabNavigator();
@@ -62,14 +63,30 @@ export default function MainScreen() {
 }
 
 function HomeScreen({navigation}) {
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('mounted');
+      return () => {
+        console.log('unmounted');
+      };
+    }, []),
+  );
+
   return (
     <View>
       <Text>Home</Text>
-      <Button
-        title="Detail 1 열기"
-        onPress={() => navigation.push('Detail', {id: 1})}
-      />
+      <OpenDetailButton />
     </View>
+  );
+}
+
+function OpenDetailButton() {
+  const navigation = useNavigation();
+  return (
+    <Button
+      title="Detail 1 열기"
+      onPress={() => navigation.push('Detail', {id: 1})}
+    />
   );
 }
 
