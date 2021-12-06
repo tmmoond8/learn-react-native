@@ -16,6 +16,10 @@ function HomeScreen({navigation}) {
         title="Detail3 열기"
         onPress={() => navigation.navigate('Detail', {id: 3, max: 3})}
       />
+      <Button
+        title="Headerless"
+        onPress={() => navigation.navigate('Headerless')}
+      />
     </View>
   );
 }
