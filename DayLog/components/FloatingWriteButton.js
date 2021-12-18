@@ -1,28 +1,64 @@
 import React from 'react';
-import {View, StyleSheet, Platform, Pressable} from 'react-native';
+import {Animated, View, StyleSheet, Platform, Pressable} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-export default function FloatingWriteButton() {
+export default function FloatingWriteButton({hidden}) {
   const navigation = useNavigation();
   // FIXME 왜 navigate가 안되지..
   const handlePress = () => {
     navigation.navigate('Write');
   };
 
+  const animation = React.useRef(new Animated.Value(0)).current;
+
+  // 선형 애니메이션
+  // React.useEffect(() => {
+  //   Animated.timing(animation, {
+  //     toValue: hidden ? 1 : 0,
+  //     useNativeDriver: true,
+  //   }).start();
+  // }, [animation, hidden]);
+
+  // 스피링 애니메이션
+  React.useEffect(() => {
+    Animated.spring(animation, {
+      toValue: hidden ? 1 : 0,
+      useNativeDriver: true,
+      tension: 45,
+      friction: 5,
+    }).start();
+  }, [animation, hidden]);
+
   return (
     <View style={styles.block}>
-      <Pressable
-        style={({pressed}) => [
-          styles.button,
-          Platform.OS === 'ios' && {
-            opacity: pressed ? 0.6 : 1,
-          },
-        ]}
-        android_ripple={{color: 'white'}}
-        onPress={handlePress}>
-        <Icon name="add" size={24} style={styles.icon} />
-      </Pressable>
+      <Animated.View
+        style={{
+          transform: [
+            {
+              translateY: animation.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 88],
+              }),
+            },
+          ],
+          opacity: animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [1, 0],
+          }),
+        }}>
+        <Pressable
+          style={({pressed}) => [
+            styles.button,
+            Platform.OS === 'ios' && {
+              opacity: pressed ? 0.6 : 1,
+            },
+          ]}
+          android_ripple={{color: 'white'}}
+          onPress={handlePress}>
+          <Icon name="add" size={24} style={styles.icon} />
+        </Pressable>
+      </Animated.View>
     </View>
   );
 }

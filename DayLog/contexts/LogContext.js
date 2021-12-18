@@ -9,68 +9,14 @@ const LogContext = React.createContext({
 export default LogContext;
 
 export function LogContextProvider({children}) {
-  const [logs, setLogs] = React.useState([
-    {
-      id: 'abcsds',
-      title: 'a 1',
-      body: 'aaa',
-      date: '2021-01-01',
-    },
-    {
-      id: 'abcsds2',
-      title: 'a 1',
-      body: 'aaa',
-      date: '2021-01-01',
-    },
-    {
-      id: 'abcsd3',
-      title: 'a 1',
-      body: 'aaa',
-      date: '2021-01-01',
-    },
-    {
-      id: 'abcsds4',
-      title: 'a 1',
-      body: 'aaa',
-      date: '2021-01-01',
-    },
-    {
-      id: 'abcsds5',
-      title: 'a 1',
-      body: 'aaa',
-      date: '2021-01-01',
-    },
-    {
-      id: 'abcsd6s',
-      title: 'a 1',
-      body: 'aaa',
-      date: '2021-01-01',
-    },
-    {
-      id: 'abcsds7',
-      title: 'a 1',
-      body: 'aaa',
-      date: '2021-01-01',
-    },
-    {
-      id: 'abcsds8',
-      title: 'a 1',
-      body: 'aaa',
-      date: '2021-01-01',
-    },
-    {
-      id: 'abcsds9',
-      title: 'a 1',
-      body: 'aaa',
-      date: '2021-01-01',
-    },
-    {
-      id: 'abcsds10',
-      title: 'a 10',
-      body: 'aaa',
-      date: '2021-01-01',
-    },
-  ]);
+  const [logs, setLogs] = React.useState(
+    Array.from({length: 10}).map((_, index) => ({
+      id: uuidv4(),
+      title: `Log ${index}`,
+      body: `Log ${index}`,
+      date: new Date().toISOString(),
+    })),
+  );
   const onCreate = ({title, body, date}) => {
     const log = {
       id: uuidv4(),
