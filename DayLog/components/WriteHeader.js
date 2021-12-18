@@ -7,6 +7,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import TransparentCircleButton from './TransparentCircleButton';
 
+const initialState = {mode: 'date', visible: false};
+
 export default function WriteHeader({
   onSave,
   onAskRemove,
@@ -15,28 +17,20 @@ export default function WriteHeader({
   onChangeDate,
 }) {
   const navigation = useNavigation();
-  const [mode, setMode] = React.useState('date');
-  const [visible, setVisible] = React.useState(false);
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const open = mode => dispatch({type: 'open', mode});
+  const close = () => dispatch({type: 'close'});
   const handleGoBack = () => {
     navigation.pop();
   };
-  const handlePressDate = () => {
-    setMode('date');
-    setVisible(true);
-  };
-
-  const handlePressTime = () => {
-    setMode('time');
-    setVisible(true);
-  };
 
   const handleConfirm = selectedDate => {
-    setVisible(false);
+    close();
     onChangeDate(selectedDate);
   };
 
   const handleCancel = () => {
-    setVisible(false);
+    close();
   };
 
   return (
@@ -69,7 +63,7 @@ export default function WriteHeader({
         </View>
       </View>
       <View style={styles.center}>
-        <Pressable onPress={handlePressDate}>
+        <Pressable onPress={() => open('date')}>
           <Text>
             {format(new Date(date), 'PPP', {
               locale: ko,
@@ -77,13 +71,13 @@ export default function WriteHeader({
           </Text>
         </Pressable>
         <View style={styles.separator} />
-        <Pressable onPress={handlePressTime}>
+        <Pressable onPress={() => open('time')}>
           <Text>{format(new Date(date), 'p', {locale: ko})}</Text>
         </Pressable>
       </View>
       <DateTimePickerModal
-        isVisible={visible}
-        mode={mode}
+        isVisible={state.visible}
+        mode={state.mode}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
         date={date}
@@ -136,3 +130,20 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
 });
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'open':
+      return {
+        mode: action.mode,
+        visible: true,
+      };
+    case 'close':
+      return {
+        ...state,
+        visible: false,
+      };
+    default:
+      throw new Error('Unhandled action type');
+  }
+}
