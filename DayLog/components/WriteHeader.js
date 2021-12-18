@@ -1,13 +1,42 @@
 import React from 'react';
-import {View, StyleSheet, Pressable} from 'react-native';
+import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {format} from 'date-fns';
+import {ko} from 'date-fns/locale';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import TransparentCircleButton from './TransparentCircleButton';
 
-export default function WriteHeader({onSave, onAskRemove, isEditing}) {
+export default function WriteHeader({
+  onSave,
+  onAskRemove,
+  isEditing,
+  date,
+  onChangeDate,
+}) {
   const navigation = useNavigation();
+  const [mode, setMode] = React.useState('date');
+  const [visible, setVisible] = React.useState(false);
   const handleGoBack = () => {
     navigation.pop();
+  };
+  const handlePressDate = () => {
+    setMode('date');
+    setVisible(true);
+  };
+
+  const handlePressTime = () => {
+    setMode('time');
+    setVisible(true);
+  };
+
+  const handleConfirm = selectedDate => {
+    setVisible(false);
+    onChangeDate(selectedDate);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
   };
 
   return (
@@ -39,6 +68,26 @@ export default function WriteHeader({onSave, onAskRemove, isEditing}) {
           </Pressable>
         </View>
       </View>
+      <View style={styles.center}>
+        <Pressable onPress={handlePressDate}>
+          <Text>
+            {format(new Date(date), 'PPP', {
+              locale: ko,
+            })}
+          </Text>
+        </Pressable>
+        <View style={styles.separator} />
+        <Pressable onPress={handlePressTime}>
+          <Text>{format(new Date(date), 'p', {locale: ko})}</Text>
+        </Pressable>
+      </View>
+      <DateTimePickerModal
+        isVisible={visible}
+        mode={mode}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+        date={date}
+      />
     </View>
   );
 }
@@ -50,6 +99,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  center: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    botom: 0,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: -1,
+    flexDirection: 'row',
+  },
+  separator: {
+    width: 8,
   },
   iconButtonWrapper: {
     width: 32,

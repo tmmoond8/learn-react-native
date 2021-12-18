@@ -10,15 +10,25 @@ export default function WriteScreen({route}) {
   const log = route.params?.log;
   const [title, setTitle] = React.useState(log?.title ?? '');
   const [body, setBody] = React.useState(log?.body ?? '');
+  const [date, setDate] = React.useState(log ? new Date(log.date) : new Date());
   const navigation = useNavigation();
   const {onCreate, onModify, onRemove} = useLogContext();
 
   const handleSave = () => {
+    if (!title || !body) {
+      Alert.alert(
+        '알림',
+        !title ? '제목을 입력해주세요' : '본문을 입력해주세요.',
+        [{text: '확인', style: 'default'}],
+      );
+      return;
+    }
     if (log) {
       onModify({
         ...log,
         title,
         body,
+        date: new Date().toISOString(),
       });
     } else {
       onCreate({
@@ -53,6 +63,8 @@ export default function WriteScreen({route}) {
           onSave={handleSave}
           onAskRemove={handleAskRemove}
           isEditing={!!log}
+          date={date}
+          onChangeDate={setDate}
         />
         <WriteEditor
           title={title}
