@@ -6,7 +6,5 @@ export default function CalendarScreen() {
 }
 
 const styles = StyleSheet.create({
-  block: {
-    backgroundColor: 'red',
-  },
+  block: {},
 });

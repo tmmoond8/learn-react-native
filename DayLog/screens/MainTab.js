@@ -12,7 +12,7 @@ export default function MainTab() {
     <Tab.Navigator
       tabBarOptions={{
         showLabel: false,
-        activeTintColor: '#009688r',
+        activeTintColor: '#009688',
       }}>
       <Tab.Screen
         name="Feed"

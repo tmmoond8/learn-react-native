@@ -6,7 +6,5 @@ export default function SearchScreen() {
 }
 
 const styles = StyleSheet.create({
-  block: {
-    backgroundColor: 'red',
-  },
+  block: {},
 });
