@@ -6,18 +6,27 @@ import WriteHeader from '../components/WriteHeader';
 import WriteEditor from '../components/WriteEditor';
 import {useLogContext} from '../contexts/LogContext';
 
-export default function WriteScreen() {
-  const [title, setTitle] = React.useState('');
-  const [body, setBody] = React.useState('');
+export default function WriteScreen({route}) {
+  const log = route.params?.log;
+  const [title, setTitle] = React.useState(log?.title ?? '');
+  const [body, setBody] = React.useState(log?.body ?? '');
   const navigation = useNavigation();
-  const {onCreate} = useLogContext();
+  const {onCreate, onModify} = useLogContext();
 
   const handleSave = () => {
-    onCreate({
-      title,
-      body,
-      date: new Date().toISOString(),
-    });
+    if (log) {
+      onModify({
+        ...log,
+        title,
+        body,
+      });
+    } else {
+      onCreate({
+        title,
+        body,
+        date: new Date().toISOString(),
+      });
+    }
     navigation.pop();
   };
 
