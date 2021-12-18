@@ -1,6 +1,7 @@
 import React from 'react';
 import {addDays} from 'date-fns';
 import {v4 as uuidv4} from 'uuid';
+import logsStorage from '../storages/logsStorage';
 
 const LogContext = React.createContext({
   logs: [],
@@ -12,6 +13,7 @@ const LogContext = React.createContext({
 export default LogContext;
 
 export function LogContextProvider({children}) {
+  const initialLogsRef = React.useRef(null);
   const today = new Date();
   const [logs, setLogs] = React.useState(
     Array.from({length: 10}).map((_, index) => ({
@@ -41,6 +43,24 @@ export function LogContextProvider({children}) {
     const nextLogs = logs.filter(log => log.id !== id);
     setLogs(nextLogs);
   };
+
+  React.useEffect(() => {
+    // useEffect 내에서 async 함수를 만들고 바로 호출
+    (async () => {
+      const savedLogs = await logsStorage.get();
+      if (savedLogs) {
+        initialLogsRef.current = savedLogs;
+        setLogs(savedLogs);
+      }
+    })();
+  }, []);
+
+  React.useEffect(() => {
+    if (logs === initialLogsRef.current) {
+      return;
+    }
+    logsStorage.set(logs);
+  }, [logs]);
 
   return (
     <LogContext.Provider value={{logs, onCreate, onModify, onRemove}}>
