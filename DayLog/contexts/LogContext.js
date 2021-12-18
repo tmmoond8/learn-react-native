@@ -4,6 +4,8 @@ import {v4 as uuidv4} from 'uuid';
 const LogContext = React.createContext({
   logs: [],
   onCreate: () => console.log('not initialzed'),
+  onModify: () => console.log('not initialzed'),
+  onRemove: () => console.log('not initialzed'),
 });
 
 export default LogContext;
@@ -33,8 +35,13 @@ export function LogContextProvider({children}) {
     setLogs(nextLogs);
   };
 
+  const onRemove = id => {
+    const nextLogs = logs.filter(log => log.id !== id);
+    setLogs(nextLogs);
+  };
+
   return (
-    <LogContext.Provider value={{logs, onCreate, onModify}}>
+    <LogContext.Provider value={{logs, onCreate, onModify, onRemove}}>
       {children}
     </LogContext.Provider>
   );

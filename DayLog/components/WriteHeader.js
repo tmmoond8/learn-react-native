@@ -4,7 +4,7 @@ import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TransparentCircleButton from './TransparentCircleButton';
 
-export default function WriteHeader({onSave}) {
+export default function WriteHeader({onSave, onAskRemove, isEditing}) {
   const navigation = useNavigation();
   const handleGoBack = () => {
     navigation.pop();
@@ -20,13 +20,16 @@ export default function WriteHeader({onSave}) {
         />
       </View>
       <View style={styles.buttons}>
-        <View style={[styles.iconButtonWrapper, styles.marginRight]}>
-          <Pressable
-            style={[styles.iconButton]}
-            android_ripple={{color: '#ededed'}}>
-            <Icon name="delete-forever" size={24} color="#ef5350" />
-          </Pressable>
-        </View>
+        {isEditing && (
+          <View style={[styles.iconButtonWrapper, styles.marginRight]}>
+            <Pressable
+              style={[styles.iconButton]}
+              android_ripple={{color: '#ededed'}}
+              onPress={onAskRemove}>
+              <Icon name="delete-forever" size={24} color="#ef5350" />
+            </Pressable>
+          </View>
+        )}
         <View style={[styles.iconButtonWrapper]}>
           <Pressable
             style={[styles.iconButton]}
