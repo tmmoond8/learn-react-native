@@ -1,4 +1,5 @@
 import React from 'react';
+import {addDays} from 'date-fns';
 import {v4 as uuidv4} from 'uuid';
 
 const LogContext = React.createContext({
@@ -11,12 +12,13 @@ const LogContext = React.createContext({
 export default LogContext;
 
 export function LogContextProvider({children}) {
+  const today = new Date();
   const [logs, setLogs] = React.useState(
     Array.from({length: 10}).map((_, index) => ({
       id: uuidv4(),
       title: `Log ${index}`,
       body: `Log ${index}`,
-      date: new Date().toISOString(),
+      date: addDays(today, -1 * (index + 1)).toISOString(),
     })),
   );
   const onCreate = ({title, body, date}) => {
