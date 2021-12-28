@@ -1,10 +1,18 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {ActivityIndicator, View, StyleSheet} from 'react-native';
 import CustomButton from '../components/CustomButton';
 
-export default function SignButtons({isSignUp, onSubmit}) {
+export default function SignButtons({isSignUp, onSubmit, loading}) {
   const navigation = useNavigation();
+
+  if (loading) {
+    return (
+      <View style={styles.spinnerWrapper}>
+        <ActivityIndicator size={32} color="#6200ee" />
+      </View>
+    );
+  }
 
   return (
     <>
@@ -36,6 +44,12 @@ export default function SignButtons({isSignUp, onSubmit}) {
 }
 
 const styles = StyleSheet.create({
+  spinnerWrapper: {
+    marginTop: 64,
+    height: 104,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   buttons: {
     marginTop: 64,
   },
