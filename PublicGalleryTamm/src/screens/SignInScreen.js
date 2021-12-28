@@ -8,8 +8,8 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import BorderedInput from '../components/BorderedInput';
-import CustomButton from '../components/CustomButton';
+import SignForm from '../components/SignForm';
+import SignButtons from '../components/SignButtons';
 
 export default function SignInScreen({navigation, route}) {
   const {isSignUp} = route.params || {};
@@ -18,9 +18,6 @@ export default function SignInScreen({navigation, route}) {
     password: '',
     confirmPassword: '',
   });
-
-  const passwordRef = React.useRef();
-  const confirmPasswordRef = React.useRef();
 
   const createChangeTextHandler = name => value => {
     setForm({...form, [name]: value});
@@ -38,75 +35,13 @@ export default function SignInScreen({navigation, route}) {
       <SafeAreaView style={styles.fullscreen}>
         <Text style={styles.text}>PublicGallery</Text>
         <View style={styles.form}>
-          <BorderedInput
-            hasMarginBottom
-            placeholder="이메일"
-            value={form.email}
-            onChangeText={createChangeTextHandler('email')}
-            autoCapitalize="none"
-            autoCorrect={false}
-            autoCompleteType="email"
-            keyboardType="email-address"
-            onSubmitEditing={() => passwordRef.current.focus()}
+          <SignForm
+            form={form}
+            isSignUp={isSignUp}
+            onSubmit={handleSubmit}
+            createChangeTextHandler={createChangeTextHandler}
           />
-          <BorderedInput
-            placeholder="비밀번호"
-            hasMarginBottom={isSignUp}
-            value={form.password}
-            onChangeText={createChangeTextHandler('password')}
-            secureTextEntry
-            ref={passwordRef}
-            returnKeyType={isSignUp ? 'next' : 'done'}
-            onSubmitEditing={() => {
-              if (isSignUp) {
-                confirmPasswordRef.current.focus();
-              } else {
-                handleSubmit();
-              }
-            }}
-          />
-          {isSignUp && (
-            <BorderedInput
-              placeholder="비밀번호 확인"
-              value={form.confirmPassword}
-              onChangeText={createChangeTextHandler('confirmPassword')}
-              secureTextEntry
-              ref={confirmPasswordRef}
-              returnKeyType="done"
-              onSubmitEditing={handleSubmit}
-            />
-          )}
-          {isSignUp ? (
-            <View style={styles.buttons}>
-              <CustomButton
-                title="회원가입"
-                hasMarginBottom
-                onPress={handleSubmit}
-              />
-              <CustomButton
-                title="로그인"
-                theme="secondary"
-                onPress={() => {
-                  navigation.goBack();
-                }}
-              />
-            </View>
-          ) : (
-            <View style={styles.buttons}>
-              <CustomButton
-                title="로그인"
-                hasMarginBottom
-                onPress={handleSubmit}
-              />
-              <CustomButton
-                title="회원가입"
-                theme="secondary"
-                onPress={() => {
-                  navigation.push('SignIn', {isSignUp: true});
-                }}
-              />
-            </View>
-          )}
+          <SignButtons isSignUp={isSignUp} onSubmit={handleSubmit} />
         </View>
       </SafeAreaView>
     </KeyboardAvoidingView>
@@ -130,8 +65,5 @@ const styles = StyleSheet.create({
     marginTop: 64,
     width: '100%',
     paddingHorizontal: 16,
-  },
-  buttons: {
-    marginTop: 64,
   },
 });
