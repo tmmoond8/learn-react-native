@@ -1,6 +1,7 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {Image, Pressable, View, StyleSheet, Platform} from 'react-native';
+import {launchImageLibrary} from 'react-native-image-picker';
 import {useUserContext} from '../contexts/UserContext';
 import {signOut} from '../libs/auth';
 import {createUser} from '../libs/users';
@@ -11,6 +12,7 @@ export default function SetupProfile() {
   const [displayName, setDisplayName] = React.useState('');
   const navigation = useNavigation();
   const {setUser} = useUserContext();
+  const [response, setReponse] = React.useState(null);
 
   const {params} = useRoute();
   const {uid} = params || {};
@@ -30,9 +32,36 @@ export default function SetupProfile() {
     navigation.goBack();
   };
 
+  const handleSelectImage = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        maxWidth: 512,
+        maxHeight: 512,
+        includeBase64: Platform.OS === 'android',
+      },
+      res => {
+        if (res.didCancel) {
+          // 취소한 경우
+          return;
+        }
+        setReponse(res);
+      },
+    );
+  };
+
   return (
     <View style={styles.block}>
-      <View style={styles.circle} />
+      <Pressable onPress={handleSelectImage}>
+        <Image
+          style={styles.circle}
+          source={{
+            uri: response
+              ? response?.assets[0]?.uri
+              : 'https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1613735418/noticon/dfzcwdbtls4cs6bpsoqk.png',
+          }}
+        />
+      </Pressable>
       <View style={styles.form}>
         <BorderedInput
           placeholder="닉네임"
