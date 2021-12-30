@@ -9,11 +9,14 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import RootStack from './src/screens/RootStack';
+import {UserContextProvider} from './src/contexts/UserContext';
 
-export default function () {
+export default function App() {
   return (
-    <NavigationContainer>
-      <RootStack />
-    </NavigationContainer>
+    <UserContextProvider>
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
+    </UserContextProvider>
   );
 }

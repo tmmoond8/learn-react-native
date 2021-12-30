@@ -13,6 +13,7 @@ import SignForm from '../components/SignForm';
 import SignButtons from '../components/SignButtons';
 import {signIn, signUp} from '../libs/auth';
 import {getUser} from '../libs/users';
+import {useUserContext} from '../contexts/UserContext';
 
 export default function SignInScreen({navigation, route}) {
   const {isSignUp} = route.params || {};
@@ -22,6 +23,7 @@ export default function SignInScreen({navigation, route}) {
     confirmPassword: '',
   });
   const [loading, setLoading] = React.useState(false);
+  const {setUser} = useUserContext();
 
   const createChangeTextHandler = name => value => {
     setForm({...form, [name]: value});
@@ -40,12 +42,11 @@ export default function SignInScreen({navigation, route}) {
 
     try {
       const {user} = isSignUp ? await signUp(info) : await signIn(info);
-      console.log(user);
       const profile = await getUser(user.id);
-      if (!profile) {
-        navigation.navigate('Welcome', {uid: user.uid});
+      if (profile) {
+        setUser(profile);
       } else {
-        // TODO 구현
+        navigation.navigate('Welcome', {uid: user.uid});
       }
     } catch (e) {
       const messages = {
