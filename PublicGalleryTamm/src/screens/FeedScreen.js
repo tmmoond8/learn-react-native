@@ -1,11 +1,17 @@
 import React from 'react';
-import {FlatList, ActivityIndicator, StyleSheet} from 'react-native';
+import {
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+  StyleSheet,
+} from 'react-native';
 import PostCard from '../components/PostCard';
-import {getOlderPosts, PAGE_SIZE, getPosts} from '../libs/posts';
+import {getNewerPosts, getOlderPosts, PAGE_SIZE, getPosts} from '../libs/posts';
 
 export default function FeedScreen() {
   const [posts, setPosts] = React.useState(null);
   const [noMorePost, setNoMorePost] = React.useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
   React.useEffect(() => {
     // 컴포넌트가 처음 마운트 될 때 포스트 목록을 조회한 후 posts 상태 얻기
     getPosts().then(setPosts);
@@ -23,6 +29,19 @@ export default function FeedScreen() {
     setPosts(posts.concat(olderPosts));
   };
 
+  const handleRefresh = async () => {
+    if (!posts || posts.length === 0 || refreshing) {
+      return;
+    }
+    const firstPost = posts[0];
+    setRefreshing(true);
+    const newerPosts = await getNewerPosts(firstPost.id);
+    setRefreshing(false);
+    if (newerPosts.length === 0) {
+      return;
+    }
+    setPosts(newerPosts.concat(posts));
+  };
   const renderItem = React.useMemo(
     () =>
       ({item}) =>
@@ -42,6 +61,9 @@ export default function FeedScreen() {
         !noMorePost && (
           <ActivityIndicator style={styles.spinner} size={21} color="#6200ee" />
         )
+      }
+      refreshControl={
+        <RefreshControl onRefresh={handleRefresh} refreshing={refreshing} />
       }
     />
   );
