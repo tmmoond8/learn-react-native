@@ -3,11 +3,7 @@ import React from 'react';
 const UserContext = React.createContext(null);
 
 export function UserContextProvider({children}) {
-  const [user, setUser] = React.useState({
-    id: '123123',
-    displayName: 'Tamm',
-    photoURL: null,
-  });
+  const [user, setUser] = React.useState(null);
   return <UserContext.Provider children={children} value={{user, setUser}} />;
 }
 
