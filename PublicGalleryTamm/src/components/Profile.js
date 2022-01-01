@@ -7,7 +7,7 @@ import {
   RefreshControl,
   StyleSheet,
 } from 'react-native';
-import {getPosts, getNewerPosts, getOlderPosts, PAGE_SIZE} from '../libs/posts';
+import {usePosts} from '../libs/posts';
 import {getUser} from '../libs/users';
 import {getImageUrl} from '../libs/utils';
 import Avatar from './Avatar';
@@ -15,37 +15,9 @@ import PostGridItem from './PostGridItem';
 
 export default function Profile({userId}) {
   const [user, setUser] = React.useState(null);
-  const [posts, setPosts] = React.useState(null);
 
-  const [noMorePost, setNoMorePost] = React.useState(false);
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const handleLoadMore = async () => {
-    if (noMorePost || !posts || posts.length < PAGE_SIZE) {
-      return;
-    }
-    const lastPost = posts[posts.length - 1];
-    const olderPosts = await getOlderPosts(lastPost, userId);
-
-    if (olderPosts.length < PAGE_SIZE) {
-      setNoMorePost(true);
-    }
-    setPosts(posts.concat(olderPosts));
-  };
-
-  const handleRefresh = async () => {
-    if (!posts || posts.length === 0 || refreshing) {
-      return;
-    }
-    const firstPost = posts[0];
-    setRefreshing(true);
-    const newerPosts = await getNewerPosts(firstPost.id, userId);
-    setRefreshing(false);
-    if (newerPosts.length === 0) {
-      return;
-    }
-    setPosts(newerPosts.concat(posts));
-  };
+  const {posts, noMorePost, refreshing, handleLoadMore, handleRefresh} =
+    usePosts(userId);
 
   const renderItem = React.useMemo(() => {
     return ({item}) => <PostGridItem post={item} />;
@@ -53,7 +25,6 @@ export default function Profile({userId}) {
 
   React.useEffect(() => {
     getUser(userId).then(setUser);
-    getPosts({userId}).then(setPosts);
   }, [userId]);
   if (!user || !posts) {
     return (
