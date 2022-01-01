@@ -10,10 +10,15 @@ import {getPosts} from '../libs/posts';
 import {getUser} from '../libs/users';
 import {getImageUrl} from '../libs/utils';
 import Avatar from './Avatar';
+import PostGridItem from './PostGridItem';
 
 export default function Profile({userId}) {
   const [user, setUser] = React.useState(null);
   const [posts, setPosts] = React.useState(null);
+
+  const renderItem = React.useMemo(() => {
+    return ({item}) => <PostGridItem post={item} />;
+  }, []);
 
   React.useEffect(() => {
     getUser(userId).then(setUser);
@@ -27,6 +32,10 @@ export default function Profile({userId}) {
   return (
     <FlatList
       style={styles.block}
+      data={posts}
+      renderItem={renderItem}
+      numColumns={3}
+      keyExtractor={item => item.id}
       ListHeaderComponent={
         <View style={styles.userInfo}>
           <Avatar
