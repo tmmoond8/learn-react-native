@@ -12,9 +12,11 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import {useUserContext} from '../contexts/UserContext';
 import {signOut} from '../libs/auth';
+import {getImageUrl} from '../libs/utils';
 import {createUser} from '../libs/users';
 import BorderedInput from './BorderedInput';
 import CustomButton from './CustomButton';
+import Avatar from './Avatar';
 
 export default function SetupProfile() {
   const [displayName, setDisplayName] = React.useState('');
@@ -80,12 +82,10 @@ export default function SetupProfile() {
   return (
     <View style={styles.block}>
       <Pressable onPress={handleSelectImage}>
-        <Image
-          style={styles.circle}
+        <Avatar
+          size={128}
           source={{
-            uri: response
-              ? response?.assets[0]?.uri
-              : 'https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1613735418/noticon/dfzcwdbtls4cs6bpsoqk.png',
+            uri: getImageUrl(response?.assets[0]?.uri),
           }}
         />
       </Pressable>
@@ -120,12 +120,6 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingHorizontal: 16,
     width: '100%',
-  },
-  circle: {
-    backgroundColor: '#cdcdcd',
-    borderRadius: 64,
-    width: 128,
-    height: 128,
   },
   spinner: {
     marginTop: 24,
