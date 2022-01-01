@@ -9,7 +9,7 @@ import {
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import UploadModal from './UploadModal';
+import ActionSheetModal from './ActionSheetModal';
 import {useNavigation} from '@react-navigation/native';
 
 const TABBAR_HEIGHT = 49;
@@ -77,11 +77,21 @@ export default function CameraButton() {
           <Icon name="camera-alt" color="white" size={24} />
         </Pressable>
       </View>
-      <UploadModal
+      <ActionSheetModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onLaunchCamera={handleLaunchCamera}
-        onLaunchImageLibrary={handleLaunchImageLibrary}
+        actions={[
+          {
+            icon: 'camera-alt',
+            text: '카메라로 촬영하기',
+            onPress: handleLaunchCamera,
+          },
+          {
+            icon: 'photo',
+            text: '사진 선택하기',
+            onPress: handleLaunchImageLibrary,
+          },
+        ]}
       />
     </>
   );
