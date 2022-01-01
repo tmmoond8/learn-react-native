@@ -1,14 +1,15 @@
 import React from 'react';
 import {useWindowDimensions, Image, Pressable, StyleSheet} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import {getImageUrl} from '../libs/utils';
 
 export default function PostGridItem({post}) {
   const dimensions = useWindowDimensions();
   const size = (dimensions.width - 3) / 3;
+  const navigation = useNavigation();
 
-  console.log('post22', post);
   const handlePress = () => {
-    // TODO
+    navigation.navigate('Post', {post});
   };
 
   return (
