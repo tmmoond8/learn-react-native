@@ -10,7 +10,10 @@ import {usePostActions} from '../libs/posts';
 
 export default function PostCard({user, photoURL, description, createdAt, id}) {
   const navigation = useNavigation();
-  const {isSelecting, handlePressMore, handleClose, actions} = usePostActions();
+  const {isSelecting, handlePressMore, handleClose, actions} = usePostActions({
+    id,
+    description,
+  });
   const {user: me} = useUserContext();
   const isMyPost = me.id === user.id;
   const date = React.useMemo(

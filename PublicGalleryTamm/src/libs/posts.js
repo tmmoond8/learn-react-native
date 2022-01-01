@@ -1,5 +1,6 @@
 import React from 'react';
 import firestore from '@react-native-firebase/firestore';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {ActionSheetIOS, Platform} from 'react-native';
 
 const postsCollection = firestore().collection('posts');
@@ -54,6 +55,10 @@ export async function getNewerPosts(id, userId) {
   });
 }
 
+export function removePost(id) {
+  return postsCollection.doc(id).delete();
+}
+
 export function usePosts(userId) {
   const [posts, setPosts] = React.useState(null);
   const [noMorePost, setNoMorePost] = React.useState(false);
@@ -104,14 +109,22 @@ export function usePosts(userId) {
   };
 }
 
-export function usePostActions() {
+export function usePostActions({id, description} = {}) {
   const [isSelecting, setIsSelecting] = React.useState(false);
+  const navigation = useNavigation();
+  const route = useRoute();
   const edit = () => {
     console.log('TODO: edit');
   };
 
-  const remove = () => {
-    console.log('TODO: remove');
+  const remove = async () => {
+    await removePost(id);
+
+    if (route.name === 'Post') {
+      navigation.pop();
+    }
+
+    // TODO: 홈 및 프로필 화면의 목록 업데이트
   };
 
   const handlePressMore = () => {
