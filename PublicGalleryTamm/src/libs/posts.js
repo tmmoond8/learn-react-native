@@ -1,5 +1,6 @@
 import React from 'react';
 import firestore from '@react-native-firebase/firestore';
+import {ActionSheetIOS, Platform} from 'react-native';
 
 const postsCollection = firestore().collection('posts');
 
@@ -100,5 +101,61 @@ export function usePosts(userId) {
     refreshing,
     handleLoadMore,
     handleRefresh,
+  };
+}
+
+export function usePostActions() {
+  const [isSelecting, setIsSelecting] = React.useState(false);
+  const edit = () => {
+    console.log('TODO: edit');
+  };
+
+  const remove = () => {
+    console.log('TODO: remove');
+  };
+
+  const handlePressMore = () => {
+    if (Platform.OS === 'android') {
+      setIsSelecting(true);
+    } else {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ['설명 수정', '게시물 삭제', '취소'],
+          destructiveButtonIndex: 1,
+          cancelButtonIndex: 2,
+        },
+        buttonIndex => {
+          if (buttonIndex === 0) {
+            edit();
+          } else if (buttonIndex === 1) {
+            remove();
+          }
+        },
+      );
+    }
+  };
+
+  const handleClose = () => {
+    setIsSelecting(false);
+  };
+
+  const actions = [
+    {
+      icon: 'edit',
+      text: '설명 수정',
+      onPress: edit,
+    },
+    {
+      icon: 'delete',
+      text: '게시물 삭제',
+      onPress: remove,
+    },
+  ];
+
+  return {
+    isSelecting,
+    handlePressMore,
+    handleClose,
+    actions,
   };
 }
