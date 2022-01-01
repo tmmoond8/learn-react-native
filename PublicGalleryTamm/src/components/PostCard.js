@@ -3,14 +3,19 @@ import {Text, Image, Pressable, View, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {getImageUrl} from '../libs/utils';
 import Avatar from './Avatar';
+import {useUserContext} from '../contexts/UserContext';
 
 export default function PostCard({user, photoURL, description, createdAt, id}) {
   const navigation = useNavigation();
+  const {user: me} = useUserContext();
   const date = React.useMemo(
     () => (createdAt ? new Date(createdAt._seconds * 1000) : new Date()),
     [createdAt],
   );
   const handleOpenProfile = () => {
+    if (user.id === me.id) {
+      navigation.navigate('MyProfile');
+    }
     navigation.navigate('Profile', {
       userId: user.id,
       displayName: user.displayName,
