@@ -15,7 +15,7 @@ export default function FeedScreen() {
   const renderItem = React.useMemo(
     () =>
       ({item}) =>
-        <PostCard {...item} />,
+        item ? <PostCard {...item} /> : null,
     [],
   );
 

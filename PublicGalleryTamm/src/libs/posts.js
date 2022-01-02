@@ -107,6 +107,17 @@ export function usePosts(userId) {
     [posts],
   );
 
+  const handleUpdate = React.useCallback(
+    ({postId, description}) => {
+      // id가  일치하는 포스트를 찾아서 description 변경
+      const nextPosts = posts
+        .filter(d => d)
+        .map(post => (post.id === postId ? {...post, description} : post));
+      setPosts(nextPosts);
+    },
+    [posts],
+  );
+
   React.useEffect(() => {
     getPosts({userId}).then(_posts => {
       setPosts(_posts);
@@ -119,6 +130,7 @@ export function usePosts(userId) {
   usePostsEventEffect({
     onRefresh: handleRefresh,
     onRemovePost: handleRefresh,
+    onUpdatePost: handleUpdate,
     enabled: !userId || userId === user.id,
   });
 
@@ -199,17 +211,24 @@ export function usePostActions({id, description} = {}) {
   };
 }
 
-export function usePostsEventEffect({onRefresh, onRemovePost, enabled}) {
+export function usePostsEventEffect({
+  enabled,
+  onRefresh,
+  onRemovePost,
+  onUpdatePost,
+}) {
   React.useEffect(() => {
     if (!enabled) {
       return;
     }
     events.addListener('refresh', onRefresh);
     events.addListener('removePost', onRemovePost);
+    events.addListener('updatePost', onUpdatePost);
 
     return () => {
       events.removeListener('refresh', onRefresh);
       events.removeListener('removePost', onRemovePost);
+      events.removeListener('updatePost', onUpdatePost);
     };
-  }, [onRefresh, onRemovePost, enabled]);
+  }, [enabled, onRefresh, onRemovePost, onUpdatePost]);
 }
