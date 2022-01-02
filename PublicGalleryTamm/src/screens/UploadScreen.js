@@ -5,7 +5,6 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   useWindowDimensions,
-  View,
   Platform,
   StyleSheet,
 } from 'react-native';
@@ -15,6 +14,7 @@ import storage from '@react-native-firebase/storage';
 import {useUserContext} from '../contexts/UserContext';
 import {v4} from 'uuid';
 import {createPost} from '../libs/posts';
+import events from '../libs/events';
 
 export default function UploadScreen() {
   const route = useRoute();
@@ -41,6 +41,7 @@ export default function UploadScreen() {
     }
     const photoURL = await reference.getDownloadURL();
     await createPost({description, photoURL, user});
+    events.emit('refresh');
   }, [res, user, description, navigation]);
 
   React.useEffect(() => {

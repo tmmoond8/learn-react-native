@@ -15,7 +15,6 @@ import PostGridItem from './PostGridItem';
 
 export default function Profile({userId}) {
   const [user, setUser] = React.useState(null);
-
   const {posts, noMorePost, refreshing, handleLoadMore, handleRefresh} =
     usePosts(userId);
 
@@ -26,11 +25,13 @@ export default function Profile({userId}) {
   React.useEffect(() => {
     getUser(userId).then(setUser);
   }, [userId]);
+
   if (!user || !posts) {
     return (
       <ActivityIndicator style={styles.spinner} size={32} color="#6200ee" />
     );
   }
+
   return (
     <FlatList
       style={styles.block}

@@ -2,6 +2,8 @@ import React from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {ActionSheetIOS, Platform} from 'react-native';
+import events from './events';
+import {useUserContext} from '../contexts/UserContext';
 
 const postsCollection = firestore().collection('posts');
 
@@ -69,6 +71,7 @@ export function usePosts(userId) {
   const [posts, setPosts] = React.useState(null);
   const [noMorePost, setNoMorePost] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
+  const {user} = useUserContext();
 
   const handleLoadMore = async () => {
     if (noMorePost || !posts || posts.length < PAGE_SIZE) {
@@ -83,7 +86,7 @@ export function usePosts(userId) {
     setPosts(posts.concat(olderPosts));
   };
 
-  const handleRefresh = async () => {
+  const handleRefresh = React.useCallback(async () => {
     if (!posts || posts.length === 0 || refreshing) {
       return;
     }
@@ -95,7 +98,14 @@ export function usePosts(userId) {
       return;
     }
     setPosts(newerPosts.concat(posts));
-  };
+  }, [posts, userId, refreshing]);
+
+  const handleRemove = React.useCallback(
+    postId => {
+      setPosts(posts.filter(post => post.id !== postId));
+    },
+    [posts],
+  );
 
   React.useEffect(() => {
     getPosts({userId}).then(_posts => {
@@ -106,12 +116,19 @@ export function usePosts(userId) {
     });
   }, [userId]);
 
+  usePostsEventEffect({
+    onRefresh: handleRefresh,
+    onRemovePost: handleRefresh,
+    enabled: !userId || userId === user.id,
+  });
+
   return {
     posts,
     noMorePost,
     refreshing,
     handleLoadMore,
     handleRefresh,
+    handleRemove,
   };
 }
 
@@ -133,7 +150,7 @@ export function usePostActions({id, description} = {}) {
       navigation.pop();
     }
 
-    // TODO: 홈 및 프로필 화면의 목록 업데이트
+    events.emit('removePost', id);
   };
 
   const handlePressMore = () => {
@@ -180,4 +197,19 @@ export function usePostActions({id, description} = {}) {
     handleClose,
     actions,
   };
+}
+
+export function usePostsEventEffect({onRefresh, onRemovePost, enabled}) {
+  React.useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+    events.addListener('refresh', onRefresh);
+    events.addListener('removePost', onRemovePost);
+
+    return () => {
+      events.removeListener('refresh', onRefresh);
+      events.removeListener('removePost', onRemovePost);
+    };
+  }, [onRefresh, onRemovePost, enabled]);
 }
