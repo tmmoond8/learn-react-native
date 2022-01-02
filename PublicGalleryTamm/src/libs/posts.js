@@ -59,6 +59,12 @@ export function removePost(id) {
   return postsCollection.doc(id).delete();
 }
 
+export function updatePost({id, description}) {
+  return postsCollection.doc(id).update({
+    description,
+  });
+}
+
 export function usePosts(userId) {
   const [posts, setPosts] = React.useState(null);
   const [noMorePost, setNoMorePost] = React.useState(false);
@@ -114,7 +120,10 @@ export function usePostActions({id, description} = {}) {
   const navigation = useNavigation();
   const route = useRoute();
   const edit = () => {
-    console.log('TODO: edit');
+    navigation.navigate('Modify', {
+      id,
+      description,
+    });
   };
 
   const remove = async () => {

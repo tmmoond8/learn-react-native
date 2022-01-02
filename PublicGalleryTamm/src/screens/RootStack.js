@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SignInScreen from './SignInScreen';
 import WelcomeScreen from './WelcomeScreen';
 import UploadScreen from './UploadScreen';
+import ModifyScreen from './ModifyScreen';
 import {useUserContext} from '../contexts/UserContext';
 import MainTab from './MainTab';
 import {getUser} from '../libs/users';
@@ -38,7 +39,12 @@ export default function RootStack() {
           <Stack.Screen
             name="Upload"
             component={UploadScreen}
-            options={{title: '새 게시물', headerBackTitle: '뒤로 가기'}}
+            options={{title: '새 게시물', headerBackTitle: '뒤로가기'}}
+          />
+          <Stack.Screen
+            name="Modify"
+            component={ModifyScreen}
+            options={{title: '설명 수정', headerBackTitle: '뒤로가기'}}
           />
         </>
       ) : (
