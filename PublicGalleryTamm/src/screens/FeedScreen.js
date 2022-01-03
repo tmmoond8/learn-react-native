@@ -5,12 +5,20 @@ import {
   RefreshControl,
   StyleSheet,
 } from 'react-native';
+import SplashScreen from 'react-native-splash-screen';
 import PostCard from '../components/PostCard';
 import {usePosts} from '../libs/posts';
 
 export default function FeedScreen() {
   const {posts, noMorePost, refreshing, handleRefresh, handleLoadMore} =
     usePosts();
+  const postsReady = posts !== null;
+
+  React.useEffect(() => {
+    if (postsReady) {
+      SplashScreen.hide();
+    }
+  }, [postsReady]);
 
   const renderItem = React.useMemo(
     () =>
